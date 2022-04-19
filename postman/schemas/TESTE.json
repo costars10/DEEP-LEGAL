@@ -1,0 +1,2176 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "DeepLegal API",
+    "description": "Api para acesso aos indicadores.\n            Para autenticação utilizar o cabeçalho `Authorization` informando um valor em base64.\n\n            O valor do header é resultado da concatenação do [email] + \"::::\" + [token de acesso fornecido] no formato base64.\n\n            Exemplo:\n            Email: admin@deeplegal.com.br\n            Token de Acesso: aa2b4c1b5c2b1c3c5c6a1a2\n            Email+:::+Token (sem base64): admin@deeplegal.com.br::::aa2b4c1b5c2b1c3c5c6a1a2\n            Valor Final (base64): YWRtaW5AZGVlcGxlZ2FsLmNvbS5icjo6OjoxMjM0NQ==\n\n            `Authorization=YWRtaW5AZGVlcGxlZ2FsLmNvbS5icjo6OjphYTJiNGMxYjVjMmIxYzNjNWM2YTFhMg==`\n            ",
+    "contact": {
+      "email": "contact@deeplegal.com.br"
+    },
+    "version": "v1"
+  },
+  "host": "api.deeplegal.com.br",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "basePath": "/api",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Token": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "Token": []
+    }
+  ],
+  "paths": {
+    "/account/": {
+      "get": {
+        "operationId": "account_list",
+        "description": "Retorna as contas relacionadas ao usuário.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ApiAccountUser"
+              }
+            }
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "account"
+        ]
+      },
+      "parameters": []
+    },
+    "/account/meta": {
+      "get": {
+        "operationId": "account_meta_list",
+        "description": "Retorna os metas relacionados a uma conta do usuário.",
+        "parameters": [
+          {
+            "name": "conta_id",
+            "in": "query",
+            "description": "Identificador da conta",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ApiAccountMeta"
+              }
+            }
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "account"
+        ]
+      },
+      "parameters": []
+    },
+    "/account/product": {
+      "get": {
+        "operationId": "account_product_list",
+        "description": "Retorna produtos associados a conta do usuário.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ApiAccountProduct"
+              }
+            }
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "account"
+        ]
+      },
+      "post": {
+        "operationId": "account_product_create",
+        "description": "Associa um produto disponível no sistema à conta do usuário.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiAccountProductLinker"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto associado a conta do usuario."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "account"
+        ]
+      },
+      "parameters": []
+    },
+    "/process/": {
+      "get": {
+        "operationId": "process_read",
+        "description": "Retorna dados relacionados ao número de processo informado.",
+        "parameters": [
+          {
+            "name": "numero_processo",
+            "in": "query",
+            "description": "Numero do Processo",
+            "required": true,
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "name": "instancia",
+            "in": "query",
+            "description": "Instancia a ser buscada. Caso não seja informado valor será retornada a primeira ocorrência do processo na ordem das instâncias.",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "carteira_id",
+            "in": "query",
+            "description": "Identificador da carteira.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Api"
+            }
+          },
+          "204": {
+            "description": "O processo não existe na base ou não há permissão suficiente para acessá-lo"
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "post": {
+        "operationId": "process_create",
+        "description": "Adiciona um processo a uma carteira existente.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "O processo foi associado corretamente à carteira informadas."
+          },
+          "204": {
+            "description": "A carteira não existe ou não há permissão suficiente."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "put": {
+        "operationId": "process_update",
+        "description": "Atualiza dados relacionados a um processo.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "O dados do processo foram corretamente atualizados."
+          },
+          "204": {
+            "description": "A carteira não existe ou não há permissão suficiente."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "parameters": []
+    },
+    "/process/bulk/delete/{carteira_id}": {
+      "post": {
+        "operationId": "process_bulk_delete",
+        "description": "Remove uma lista de processos de uma carteira.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiBulkDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Processos removidos com sucesso."
+          },
+          "204": {
+            "description": "A carteira não existe para a conta do usuário."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "carteira_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/process/bulk/insert_update/{carteira_id}": {
+      "post": {
+        "operationId": "process_bulk_insert_update",
+        "description": "Insere ou atualiza dados de um conjunto de processados para a carteira informada.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ApiBulkCreate"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Processos inseridos/atualizados com sucesso."
+          },
+          "204": {
+            "description": "A carteira não existe para a conta do usuário."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "carteira_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/process/events/{process_number}": {
+      "get": {
+        "operationId": "process_events_read",
+        "description": "Shows list of events of a process from current user.",
+        "parameters": [
+          {
+            "name": "process_number",
+            "in": "path",
+            "description": "Process number in format CNJ format. Ex. 9999999-99.9999.9.99.9999",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProcessEvent"
+              }
+            }
+          },
+          "204": {
+            "description": "The process doesn't exist or you don't have access to any data related to it."
+          },
+          "400": {
+            "description": "Errors related to the parameters sent."
+          },
+          "401": {
+            "description": "You don't have the minimal permissions required."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "process_number",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/process/update": {
+      "post": {
+        "operationId": "process_update_create",
+        "description": "Informa sobre novas movimentações a respeito do processo informado.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Realizado agendamento para atualização dos dados do processo."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "parameters": []
+    },
+    "/process/{numero_processo}/{carteira_id}": {
+      "delete": {
+        "operationId": "process_delete",
+        "description": "Remove um processo de uma carteira.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Processo removido com sucesso."
+          },
+          "204": {
+            "description": "O processo ou a carteira não existem."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "process"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "carteira_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "numero_processo",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/product/": {
+      "get": {
+        "operationId": "product_list",
+        "description": "Retorna produtos disponíveis no sistema.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ApiAccountProduct"
+              }
+            }
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "product"
+        ]
+      },
+      "parameters": []
+    },
+    "/v2/wallet/": {
+      "get": {
+        "operationId": "v2_wallet_list",
+        "description": "Retorna dados de carteiras vinculadas ao usuário corrente.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ApiWalletList"
+              }
+            }
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "v2"
+        ]
+      },
+      "post": {
+        "operationId": "v2_wallet_create",
+        "description": "Cria uma nova carteira.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ApiCreateWallet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Carteira criada com sucesso."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "v2"
+        ]
+      },
+      "parameters": []
+    },
+    "/v2/wallet/{id}": {
+      "delete": {
+        "operationId": "v2_wallet_delete",
+        "description": "Deleta uma carteira criada via api.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Carteira deletada com sucesso."
+          },
+          "204": {
+            "description": "A carteira não existe ou não há permissão para acessá-la."
+          },
+          "400": {
+            "description": "Algum erro aconteceu durante a execução."
+          },
+          "401": {
+            "description": "Não há permissão para executar a ação."
+          }
+        },
+        "tags": [
+          "v2"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/wallet/": {
+      "get": {
+        "operationId": "wallet_list",
+        "description": "Show wallets from current user.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Wallet"
+              }
+            }
+          },
+          "400": {
+            "description": "Errors related to the parameters sent."
+          },
+          "401": {
+            "description": "You don't have the minimal permissions required."
+          }
+        },
+        "tags": [
+          "wallet"
+        ]
+      },
+      "parameters": []
+    },
+    "/wallet/{id}": {
+      "get": {
+        "operationId": "wallet_read",
+        "description": "Shows a paginated list of processes of a wallet from current user. Each page has 1000 processes. to access page 2, use ?page=2 as GET parameter.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Pagination parameter",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Process"
+              }
+            }
+          },
+          "400": {
+            "description": "Errors related to the parameters sent."
+          },
+          "401": {
+            "description": "You don't have the minimal permissions required."
+          }
+        },
+        "tags": [
+          "wallet"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "ApiAccountUser": {
+      "required": [
+        "id",
+        "nome"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identificador da Conta",
+          "type": "integer"
+        },
+        "nome": {
+          "title": "Nome",
+          "description": "Nome da Conta",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ApiAccountMeta": {
+      "required": [
+        "chave",
+        "descricao"
+      ],
+      "type": "object",
+      "properties": {
+        "chave": {
+          "title": "Chave",
+          "description": "Chave do meta",
+          "type": "string",
+          "minLength": 1
+        },
+        "descricao": {
+          "title": "Descricao",
+          "description": "Descrição do meta",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ApiAccountProduct": {
+      "required": [
+        "id",
+        "label"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "description": "Identificador do Produto",
+          "type": "integer"
+        },
+        "label": {
+          "title": "Label",
+          "description": "Label do Produto",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ApiAccountProductLinker": {
+      "required": [
+        "conta_id",
+        "produto_id",
+        "dias_para_expirar",
+        "parte",
+        "label"
+      ],
+      "type": "object",
+      "properties": {
+        "conta_id": {
+          "title": "Conta id",
+          "description": "Conta do usuário ao qual o produto será associado",
+          "type": "integer"
+        },
+        "produto_id": {
+          "title": "Produto id",
+          "description": "Identificador de um produto disponível no sistema",
+          "type": "integer"
+        },
+        "dias_para_expirar": {
+          "title": "Dias para expirar",
+          "description": "Dias para expirar",
+          "type": "integer"
+        },
+        "parte": {
+          "title": "Parte",
+          "description": "Parte do processo. Ativo ou Passivo.",
+          "type": "string",
+          "enum": [
+            "ativo",
+            "passivo"
+          ]
+        },
+        "label": {
+          "title": "Label",
+          "description": "Label do Produto",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "Api": {
+      "required": [
+        "acordao_ini",
+        "acordo_conf",
+        "adv_requerente_lista",
+        "adv_requerido_lista",
+        "alvara_expedido_data",
+        "apelante_texto",
+        "area_texto",
+        "arquivado_conf",
+        "arquivado_cont",
+        "arquivado_data",
+        "arquivado_duracao",
+        "arquivado_provisorio_conf",
+        "assunto_normalizado_texto",
+        "assunto_texto",
+        "assuntos_ini",
+        "audiencia_data",
+        "audiencia_designada_conf",
+        "audiencia_designada_data",
+        "autor_do_recurso_texto",
+        "cartaprecatoria_conf",
+        "cidade",
+        "citacao_conf",
+        "citacao_conf_data",
+        "citacao_data",
+        "citacao_duracao",
+        "citacao_edital_conf",
+        "citacao_enviada_conf",
+        "citacao_por_edital_conf",
+        "citacao_semsucesso_cont",
+        "citacao_semsucesso_data",
+        "classe_texto",
+        "condenacao_dano_material_valor",
+        "condenacao_pensao_valor",
+        "condenacao_valor",
+        "conhecimento_do_recurso_texto",
+        "contumacia_texto",
+        "danomoral_valor",
+        "data_acordo_homologado_antes_sentenca_data",
+        "data_ameaca_penhora_data",
+        "data_assembleia_data",
+        "data_avaliacao_data",
+        "data_conclusosent_data",
+        "data_conf_citacao_data",
+        "data_da_contestacao_data",
+        "data_da_tutela_declinada_data",
+        "data_da_ultima_citacao_mal_sucedida_data",
+        "data_de_arrecadacao_data",
+        "data_de_indicio_de_deposito_data",
+        "data_deposito_levant_data",
+        "data_do_acordao_data",
+        "data_do_acordo_qqerfase_data",
+        "data_do_recurso_data",
+        "data_envio_do_recurso_data",
+        "data_execucao_sentenca_data",
+        "data_fim_da_execucao_data",
+        "data_migracao_data",
+        "data_penhora_levantada_data",
+        "data_penhora_negada_data",
+        "data_recup_judicial_data",
+        "data_retorno_do_recurso_data",
+        "data_sentenca_execucao_data",
+        "data_transito_julgado_data",
+        "data_transito_julgado_extinto_ou_improcedente_data",
+        "data_transito_julgado_procedente_ou_parc_procedente_data",
+        "data_ultimo_movimento_data",
+        "desarquivado_conf",
+        "desistencia_ausencia_ou_extincao_texto",
+        "dias_ate_execucao_de_sentenca_duracao",
+        "dias_ate_retorno_do_recurso_duracao",
+        "duracao_ate_acordao_duracao",
+        "duracao_ate_recurso_duracao",
+        "duracaoestimada_data",
+        "escritorio_cna_requerente_texto",
+        "escritorio_cna_requerido_texto",
+        "extincaopordesistencia_conf",
+        "extintosemresolucao_prob",
+        "fase_do_acordo_realizado_texto",
+        "fase_processual_texto",
+        "honorario_valor",
+        "improcedente_prob",
+        "impugnacao_sentenca_conf",
+        "inativo360_conf",
+        "inativo90_conf",
+        "inativo_duracao",
+        "instancia",
+        "juiz_lista",
+        "juiz_normalizado_texto",
+        "juiz_processo_texto",
+        "juiz_sentenca_texto",
+        "julgador_2a_instancia_texto",
+        "justica_gratuita_texto",
+        "justica_tipo",
+        "latitude_valor",
+        "leilao_definicao_data",
+        "link_para_tela",
+        "longitude_valor",
+        "link_inicial",
+        "metas",
+        "modified",
+        "movimento1_texto",
+        "movimento2_texto",
+        "movimento3_texto",
+        "movimento4_texto",
+        "movimento5_texto",
+        "movimentosentenca_cont",
+        "multa_diaria_conf",
+        "no_de_tentativas_citacao_valor",
+        "num_execucao_sentenca_texto",
+        "num_processo_migrado_texto",
+        "numero_processo",
+        "obrigacao_fazer_texto",
+        "orgao_julgador_texto",
+        "penhora_conf_data",
+        "penhoralevantada_data",
+        "penhorarequerida_data",
+        "pericia_conf",
+        "previsaojulgamento_tipo",
+        "primeiromovimento_data",
+        "prioridade_texto",
+        "probabilidade_acordo",
+        "procedente_prob",
+        "processo_de_origem_texto",
+        "processo_origem_fisico_conf",
+        "recuperacaojudicial_data",
+        "recursopreparo_valor",
+        "requerente_lista",
+        "requerido_lista",
+        "resultado_do_recurso_texto",
+        "resultado_exec_texto",
+        "resultado_recurso_original_texto",
+        "resultadojulgamento_tipo",
+        "retorno_laudo_pericial_data",
+        "revelia_conf",
+        "revelia_data",
+        "se_ha_pericia_conf",
+        "se_houve_tutela_declinada_conf",
+        "sentenca_concluso_data",
+        "sentenca_data",
+        "sentenca_duracao",
+        "sentenca_tipo",
+        "sinal_de_processo_fisico_conf",
+        "sistema_que_o_dado_foi_obtido_texto",
+        "status_texto",
+        "status_tipo",
+        "texto_sentenca_texto",
+        "texto_tutela_texto",
+        "tipo_de_decisao_texto",
+        "tipo_de_extincao_texto",
+        "tipo_de_justica_texto",
+        "tipo_de_processo_texto",
+        "tipo_de_requerente_texto",
+        "transitojulg_imp_ext_data",
+        "transitojulgado_data",
+        "transitojulgparcproc_data",
+        "tutela_conf",
+        "tutela_duracao",
+        "tutela_neg_conf",
+        "uf",
+        "ultimomovimento_data",
+        "valor_do_acordo_valor",
+        "valor_valor",
+        "vara_texto"
+      ],
+      "type": "object",
+      "properties": {
+        "acordao_ini": {
+          "title": "Acordao ini",
+          "description": "Probabilidades relacionadas ao acordão",
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "acordo_conf": {
+          "title": "Acordo conf",
+          "description": "Se há sinal de acordo no processo",
+          "type": "boolean"
+        },
+        "adv_requerente_lista": {
+          "description": "Lista de advogados das partes requerentes",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "adv_requerido_lista": {
+          "description": "Lista de advogados das partes requeridas",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "alvara_expedido_data": {
+          "title": "Alvara expedido data",
+          "description": "Data do alvará expedido",
+          "type": "string",
+          "minLength": 1
+        },
+        "apelante_texto": {
+          "title": "Apelante texto",
+          "description": "Apelante",
+          "type": "string",
+          "minLength": 1
+        },
+        "area_texto": {
+          "title": "Area texto",
+          "description": "Area",
+          "type": "string",
+          "minLength": 1
+        },
+        "arquivado_conf": {
+          "title": "Arquivado conf",
+          "description": "Se há sinal de arquivamento definitivo",
+          "type": "boolean"
+        },
+        "arquivado_cont": {
+          "title": "Arquivado cont",
+          "type": "integer"
+        },
+        "arquivado_data": {
+          "title": "Arquivado data",
+          "type": "string",
+          "minLength": 1
+        },
+        "arquivado_duracao": {
+          "title": "Arquivado duracao",
+          "type": "integer"
+        },
+        "arquivado_provisorio_conf": {
+          "title": "Arquivado provisorio conf",
+          "description": "Se há sinal de arquivamento provisorio",
+          "type": "string",
+          "minLength": 1
+        },
+        "assunto_normalizado_texto": {
+          "title": "Assunto normalizado texto",
+          "type": "string",
+          "minLength": 1
+        },
+        "assunto_texto": {
+          "title": "Assunto texto",
+          "type": "string",
+          "minLength": 1
+        },
+        "assuntos_ini": {
+          "title": "Assuntos ini",
+          "description": "Probabilidades relacionadas ao assuntos",
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "audiencia_data": {
+          "title": "Audiencia data",
+          "type": "string",
+          "minLength": 1
+        },
+        "audiencia_designada_conf": {
+          "title": "Audiencia designada conf",
+          "description": "Se há sinal de audiência designada",
+          "type": "string",
+          "minLength": 1
+        },
+        "audiencia_designada_data": {
+          "title": "Audiencia designada data",
+          "type": "string",
+          "minLength": 1
+        },
+        "autor_do_recurso_texto": {
+          "title": "Autor do recurso texto",
+          "description": "Autor do Recurso",
+          "type": "string",
+          "minLength": 1
+        },
+        "cartaprecatoria_conf": {
+          "title": "Cartaprecatoria conf",
+          "description": "Se há sinal de carta precatória",
+          "type": "string",
+          "minLength": 1
+        },
+        "cidade": {
+          "title": "Cidade",
+          "description": "Cidade",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_conf": {
+          "title": "Citacao conf",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_conf_data": {
+          "title": "Citacao conf data",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_data": {
+          "title": "Citacao data",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_duracao": {
+          "title": "Citacao duracao",
+          "type": "integer"
+        },
+        "citacao_edital_conf": {
+          "title": "Citacao edital conf",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_enviada_conf": {
+          "title": "Citacao enviada conf",
+          "description": "Se há sinal de citação enviada",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_por_edital_conf": {
+          "title": "Citacao por edital conf",
+          "description": "Se Houve Citacao por Edital",
+          "type": "boolean"
+        },
+        "citacao_semsucesso_cont": {
+          "title": "Citacao semsucesso cont",
+          "type": "string",
+          "minLength": 1
+        },
+        "citacao_semsucesso_data": {
+          "title": "Citacao semsucesso data",
+          "type": "string",
+          "minLength": 1
+        },
+        "classe_texto": {
+          "title": "Classe texto",
+          "description": "Classe",
+          "type": "string",
+          "minLength": 1
+        },
+        "condenacao_dano_material_valor": {
+          "title": "Condenacao dano material valor",
+          "description": "Valor de Condenação Dano Material",
+          "type": "number"
+        },
+        "condenacao_pensao_valor": {
+          "title": "Condenacao pensao valor",
+          "description": "Valor de Condenação de Pensão",
+          "type": "number"
+        },
+        "condenacao_valor": {
+          "title": "Condenacao valor",
+          "type": "number"
+        },
+        "conhecimento_do_recurso_texto": {
+          "title": "Conhecimento do recurso texto",
+          "description": "Conhecimento do Recurso",
+          "type": "string",
+          "minLength": 1
+        },
+        "contumacia_texto": {
+          "title": "Contumacia texto",
+          "description": "Contumacia",
+          "type": "string",
+          "minLength": 1
+        },
+        "danomoral_valor": {
+          "title": "Danomoral valor",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_acordo_homologado_antes_sentenca_data": {
+          "title": "Data acordo homologado antes sentenca data",
+          "description": "Acordo Homologado antes Sentença",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_ameaca_penhora_data": {
+          "title": "Data ameaca penhora data",
+          "description": "Data Ameaça Penhora",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_assembleia_data": {
+          "title": "Data assembleia data",
+          "description": "Data Assembleia",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_avaliacao_data": {
+          "title": "Data avaliacao data",
+          "description": "Data Avaliacao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_conclusosent_data": {
+          "title": "Data conclusosent data",
+          "description": "ml.data_conclusosent",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_conf_citacao_data": {
+          "title": "Data conf citacao data",
+          "description": "Data conf. Citacao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_da_contestacao_data": {
+          "title": "Data da contestacao data",
+          "description": "Data da Contestacao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_da_tutela_declinada_data": {
+          "title": "Data da tutela declinada data",
+          "description": "Data da tutela declinada",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_da_ultima_citacao_mal_sucedida_data": {
+          "title": "Data da ultima citacao mal sucedida data",
+          "description": "Data da Ultima Citacao Mal Sucedida",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_de_arrecadacao_data": {
+          "title": "Data de arrecadacao data",
+          "description": "Data de Arrecadacao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_de_indicio_de_deposito_data": {
+          "title": "Data de indicio de deposito data",
+          "description": "Data de indicio de deposito",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_deposito_levant_data": {
+          "title": "Data deposito levant data",
+          "description": "Deposito levant",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_do_acordao_data": {
+          "title": "Data do acordao data",
+          "description": "Data do Acordao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_do_acordo_qqerfase_data": {
+          "title": "Data do acordo qqerfase data",
+          "description": "Data do Acordo - qqer fase",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_do_recurso_data": {
+          "title": "Data do recurso data",
+          "description": "Data do Recurso",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_envio_do_recurso_data": {
+          "title": "Data envio do recurso data",
+          "description": "Data Envio do Recurso",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_execucao_sentenca_data": {
+          "title": "Data execucao sentenca data",
+          "description": "Data Execucao Sentenca",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_fim_da_execucao_data": {
+          "title": "Data fim da execucao data",
+          "description": "Data Fim da Execuçao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_migracao_data": {
+          "title": "Data migracao data",
+          "description": "Data Migracao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_penhora_levantada_data": {
+          "title": "Data penhora levantada data",
+          "description": "Data Penhora Levantada",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_penhora_negada_data": {
+          "title": "Data penhora negada data",
+          "description": "Penhora Negada",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_recup_judicial_data": {
+          "title": "Data recup judicial data",
+          "description": "Data Recup. Judicial",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_retorno_do_recurso_data": {
+          "title": "Data retorno do recurso data",
+          "description": "Data Retorno do Recurso",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_sentenca_execucao_data": {
+          "title": "Data sentenca execucao data",
+          "description": "Data Sentenca Execucao",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_transito_julgado_data": {
+          "title": "Data transito julgado data",
+          "description": "Se há Transito Julgado",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_transito_julgado_extinto_ou_improcedente_data": {
+          "title": "Data transito julgado extinto ou improcedente data",
+          "description": "Data transito julgado (Extinto ou Improcedente)",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_transito_julgado_procedente_ou_parc_procedente_data": {
+          "title": "Data transito julgado procedente ou parc procedente data",
+          "description": "Data transito julgado (Procedente ou Parc. Procedente)",
+          "type": "string",
+          "minLength": 1
+        },
+        "data_ultimo_movimento_data": {
+          "title": "Data ultimo movimento data",
+          "description": "Data Ultimo Movimento",
+          "type": "string",
+          "minLength": 1
+        },
+        "desarquivado_conf": {
+          "title": "Desarquivado conf",
+          "type": "string",
+          "minLength": 1
+        },
+        "desistencia_ausencia_ou_extincao_texto": {
+          "title": "Desistencia ausencia ou extincao texto",
+          "description": "Desistencia, Ausencia ou Extincao",
+          "type": "string",
+          "minLength": 1
+        },
+        "dias_ate_execucao_de_sentenca_duracao": {
+          "title": "Dias ate execucao de sentenca duracao",
+          "description": "Dias até Execução de Sentença",
+          "type": "number"
+        },
+        "dias_ate_retorno_do_recurso_duracao": {
+          "title": "Dias ate retorno do recurso duracao",
+          "description": "Dias até retorno do Recurso",
+          "type": "number"
+        },
+        "duracao_ate_acordao_duracao": {
+          "title": "Duracao ate acordao duracao",
+          "description": "Duracao até acordao",
+          "type": "number"
+        },
+        "duracao_ate_recurso_duracao": {
+          "title": "Duracao ate recurso duracao",
+          "description": "Duracao até recurso",
+          "type": "number"
+        },
+        "duracaoestimada_data": {
+          "title": "Duracaoestimada data",
+          "description": "Duracao esperada sentenca",
+          "type": "string",
+          "minLength": 1
+        },
+        "escritorio_cna_requerente_texto": {
+          "title": "Escritorio cna requerente texto",
+          "description": "Escritorio CNA Requerente",
+          "type": "string",
+          "minLength": 1
+        },
+        "escritorio_cna_requerido_texto": {
+          "title": "Escritorio cna requerido texto",
+          "description": "Escritorio CNA Requerido",
+          "type": "string",
+          "minLength": 1
+        },
+        "extincaopordesistencia_conf": {
+          "title": "Extincaopordesistencia conf",
+          "type": "boolean"
+        },
+        "extintosemresolucao_prob": {
+          "title": "Extintosemresolucao prob",
+          "type": "string",
+          "minLength": 1
+        },
+        "fase_do_acordo_realizado_texto": {
+          "title": "Fase do acordo realizado texto",
+          "description": "Fase do Acordo Realizado",
+          "type": "string",
+          "minLength": 1
+        },
+        "fase_processual_texto": {
+          "title": "Fase processual texto",
+          "description": "Fase Processual",
+          "type": "string",
+          "minLength": 1
+        },
+        "honorario_valor": {
+          "title": "Honorario valor",
+          "type": "number"
+        },
+        "improcedente_prob": {
+          "title": "Improcedente prob",
+          "type": "string",
+          "minLength": 1
+        },
+        "impugnacao_sentenca_conf": {
+          "title": "Impugnacao sentenca conf",
+          "description": "Impugnacao Sentenca",
+          "type": "boolean"
+        },
+        "inativo360_conf": {
+          "title": "Inativo360 conf",
+          "type": "string",
+          "minLength": 1
+        },
+        "inativo90_conf": {
+          "title": "Inativo90 conf",
+          "type": "string",
+          "minLength": 1
+        },
+        "inativo_duracao": {
+          "title": "Inativo duracao",
+          "type": "string",
+          "minLength": 1
+        },
+        "instancia": {
+          "title": "Instancia",
+          "description": "Instancia",
+          "type": "string",
+          "minLength": 1
+        },
+        "juiz_lista": {
+          "title": "Juiz lista",
+          "type": "string",
+          "minLength": 1
+        },
+        "juiz_normalizado_texto": {
+          "title": "Juiz normalizado texto",
+          "description": "Juiz Normalizado",
+          "type": "string",
+          "minLength": 1
+        },
+        "juiz_processo_texto": {
+          "title": "Juiz processo texto",
+          "description": "Juiz processo",
+          "type": "string",
+          "minLength": 1
+        },
+        "juiz_sentenca_texto": {
+          "title": "Juiz sentenca texto",
+          "description": "Juiz sentença",
+          "type": "string",
+          "minLength": 1
+        },
+        "julgador_2a_instancia_texto": {
+          "title": "Julgador 2a instancia texto",
+          "description": "Julgador 2a Instancia",
+          "type": "string",
+          "minLength": 1
+        },
+        "justica_gratuita_texto": {
+          "title": "Justica gratuita texto",
+          "description": "Justica Gratuita",
+          "type": "string",
+          "minLength": 1
+        },
+        "justica_tipo": {
+          "title": "Justica tipo",
+          "type": "string",
+          "minLength": 1
+        },
+        "latitude_valor": {
+          "title": "Latitude valor",
+          "description": "Latitude",
+          "type": "number"
+        },
+        "leilao_definicao_data": {
+          "title": "Leilao definicao data",
+          "type": "string",
+          "minLength": 1
+        },
+        "link_para_tela": {
+          "title": "Link para tela",
+          "description": "Link para screenshot da tela",
+          "type": "string",
+          "minLength": 1
+        },
+        "longitude_valor": {
+          "title": "Longitude valor",
+          "description": "Longitude",
+          "type": "number"
+        },
+        "link_inicial": {
+          "title": "Link inicial",
+          "description": "Link para inicial do processo",
+          "type": "string",
+          "minLength": 1
+        },
+        "metas": {
+          "title": "Metas",
+          "description": "Metas",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "modified": {
+          "title": "Modified",
+          "description": "Data da última modificação",
+          "type": "string",
+          "minLength": 1
+        },
+        "movimento1_texto": {
+          "title": "Movimento1 texto",
+          "type": "string",
+          "minLength": 1
+        },
+        "movimento2_texto": {
+          "title": "Movimento2 texto",
+          "description": "Penultimo movimento",
+          "type": "string",
+          "minLength": 1
+        },
+        "movimento3_texto": {
+          "title": "Movimento3 texto",
+          "description": "Ante-penultimo movimento",
+          "type": "string",
+          "minLength": 1
+        },
+        "movimento4_texto": {
+          "title": "Movimento4 texto",
+          "type": "string",
+          "minLength": 1
+        },
+        "movimento5_texto": {
+          "title": "Movimento5 texto",
+          "type": "string",
+          "minLength": 1
+        },
+        "movimentosentenca_cont": {
+          "title": "Movimentosentenca cont",
+          "type": "integer"
+        },
+        "multa_diaria_conf": {
+          "title": "Multa diaria conf",
+          "description": "Multa Diaria",
+          "type": "boolean"
+        },
+        "no_de_tentativas_citacao_valor": {
+          "title": "No de tentativas citacao valor",
+          "description": "No. De tentativas Citacao",
+          "type": "number"
+        },
+        "num_execucao_sentenca_texto": {
+          "title": "Num execucao sentenca texto",
+          "description": "Num. Execucao sentenca",
+          "type": "string",
+          "minLength": 1
+        },
+        "num_processo_migrado_texto": {
+          "title": "Num processo migrado texto",
+          "description": "Num. Processo Migrado",
+          "type": "string",
+          "minLength": 1
+        },
+        "numero_processo": {
+          "title": "Numero processo",
+          "description": "Numero do Processo",
+          "type": "string",
+          "minLength": 1
+        },
+        "obrigacao_fazer_texto": {
+          "title": "Obrigacao fazer texto",
+          "description": "Obrigacao Fazer",
+          "type": "string",
+          "minLength": 1
+        },
+        "orgao_julgador_texto": {
+          "title": "Orgao julgador texto",
+          "description": "Orgao Julgador",
+          "type": "string",
+          "minLength": 1
+        },
+        "penhora_conf_data": {
+          "title": "Penhora conf data",
+          "type": "string",
+          "minLength": 1
+        },
+        "penhoralevantada_data": {
+          "title": "Penhoralevantada data",
+          "type": "string",
+          "minLength": 1
+        },
+        "penhorarequerida_data": {
+          "title": "Penhorarequerida data",
+          "type": "string",
+          "minLength": 1
+        },
+        "pericia_conf": {
+          "title": "Pericia conf",
+          "type": "boolean"
+        },
+        "previsaojulgamento_tipo": {
+          "title": "Previsaojulgamento tipo",
+          "description": "Resultado Previsto",
+          "type": "string",
+          "minLength": 1
+        },
+        "primeiromovimento_data": {
+          "title": "Primeiromovimento data",
+          "type": "string",
+          "minLength": 1
+        },
+        "prioridade_texto": {
+          "title": "Prioridade texto",
+          "description": "Prioridade",
+          "type": "string",
+          "minLength": 1
+        },
+        "probabilidade_acordo": {
+          "title": "Probabilidade acordo",
+          "type": "string",
+          "minLength": 1
+        },
+        "procedente_prob": {
+          "title": "Procedente prob",
+          "type": "string",
+          "minLength": 1
+        },
+        "processo_de_origem_texto": {
+          "title": "Processo de origem texto",
+          "description": "Processo de Origem",
+          "type": "string",
+          "minLength": 1
+        },
+        "processo_origem_fisico_conf": {
+          "title": "Processo origem fisico conf",
+          "description": "Processo Origem Fisico",
+          "type": "boolean"
+        },
+        "recuperacaojudicial_data": {
+          "title": "Recuperacaojudicial data",
+          "type": "string",
+          "minLength": 1
+        },
+        "recursopreparo_valor": {
+          "title": "Recursopreparo valor",
+          "type": "string",
+          "minLength": 1
+        },
+        "requerente_lista": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "requerido_lista": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "resultado_do_recurso_texto": {
+          "title": "Resultado do recurso texto",
+          "description": "Resultado do Recurso",
+          "type": "string",
+          "minLength": 1
+        },
+        "resultado_exec_texto": {
+          "title": "Resultado exec texto",
+          "description": "Resultado Exec",
+          "type": "string",
+          "minLength": 1
+        },
+        "resultado_recurso_original_texto": {
+          "title": "Resultado recurso original texto",
+          "description": "Resultado Recurso Original",
+          "type": "string",
+          "minLength": 1
+        },
+        "resultadojulgamento_tipo": {
+          "title": "Resultadojulgamento tipo",
+          "type": "string",
+          "minLength": 1
+        },
+        "retorno_laudo_pericial_data": {
+          "title": "Retorno laudo pericial data",
+          "description": "Retorno Laudo Pericial",
+          "type": "string",
+          "minLength": 1
+        },
+        "revelia_conf": {
+          "title": "Revelia conf",
+          "type": "string",
+          "minLength": 1
+        },
+        "revelia_data": {
+          "title": "Revelia data",
+          "type": "string",
+          "minLength": 1
+        },
+        "se_ha_pericia_conf": {
+          "title": "Se ha pericia conf",
+          "description": "Se há Pericia",
+          "type": "boolean"
+        },
+        "se_houve_tutela_declinada_conf": {
+          "title": "Se houve tutela declinada conf",
+          "description": "Se houve tutela declinada",
+          "type": "boolean"
+        },
+        "sentenca_concluso_data": {
+          "title": "Sentenca concluso data",
+          "type": "string",
+          "minLength": 1
+        },
+        "sentenca_data": {
+          "title": "Sentenca data",
+          "type": "string",
+          "minLength": 1
+        },
+        "sentenca_duracao": {
+          "title": "Sentenca duracao",
+          "type": "integer"
+        },
+        "sentenca_tipo": {
+          "title": "Sentenca tipo",
+          "type": "string",
+          "minLength": 1
+        },
+        "sinal_de_processo_fisico_conf": {
+          "title": "Sinal de processo fisico conf",
+          "description": "Sinal de Processo Fisico",
+          "type": "boolean"
+        },
+        "sistema_que_o_dado_foi_obtido_texto": {
+          "title": "Sistema que o dado foi obtido texto",
+          "description": "Sistema que o dado foi obtido",
+          "type": "string",
+          "minLength": 1
+        },
+        "status_texto": {
+          "title": "Status texto",
+          "description": "Status",
+          "type": "string",
+          "minLength": 1
+        },
+        "status_tipo": {
+          "title": "Status tipo",
+          "type": "string",
+          "minLength": 1
+        },
+        "texto_sentenca_texto": {
+          "title": "Texto sentenca texto",
+          "description": "Texto Sentença",
+          "type": "string",
+          "minLength": 1
+        },
+        "texto_tutela_texto": {
+          "title": "Texto tutela texto",
+          "description": "Texto Tutela",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo_de_decisao_texto": {
+          "title": "Tipo de decisao texto",
+          "description": "Tipo de Decisao",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo_de_extincao_texto": {
+          "title": "Tipo de extincao texto",
+          "description": "Tipo de Extinção",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo_de_justica_texto": {
+          "title": "Tipo de justica texto",
+          "description": "Tipo de Justiça (c= Civel, j= JEC, f= Federal, t= Trabalhista)",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo_de_processo_texto": {
+          "title": "Tipo de processo texto",
+          "description": "Tipo de Processo",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo_de_requerente_texto": {
+          "title": "Tipo de requerente texto",
+          "description": "Tipo de Requerente",
+          "type": "string",
+          "minLength": 1
+        },
+        "transitojulg_imp_ext_data": {
+          "title": "Transitojulg imp ext data",
+          "type": "string",
+          "minLength": 1
+        },
+        "transitojulgado_data": {
+          "title": "Transitojulgado data",
+          "type": "string",
+          "minLength": 1
+        },
+        "transitojulgparcproc_data": {
+          "title": "Transitojulgparcproc data",
+          "type": "string",
+          "minLength": 1
+        },
+        "tutela_conf": {
+          "title": "Tutela conf",
+          "type": "boolean"
+        },
+        "tutela_duracao": {
+          "title": "Tutela duracao",
+          "type": "string",
+          "minLength": 1
+        },
+        "tutela_neg_conf": {
+          "title": "Tutela neg conf",
+          "type": "boolean"
+        },
+        "uf": {
+          "title": "Uf",
+          "description": "UF",
+          "type": "string",
+          "minLength": 1
+        },
+        "ultimomovimento_data": {
+          "title": "Ultimomovimento data",
+          "type": "string",
+          "minLength": 1
+        },
+        "valor_do_acordo_valor": {
+          "title": "Valor do acordo valor",
+          "description": "Valor do Acordo",
+          "type": "number"
+        },
+        "valor_valor": {
+          "title": "Valor valor",
+          "description": "Valor",
+          "type": "number"
+        },
+        "vara_texto": {
+          "title": "Vara texto",
+          "description": "Vara",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ApiCreate": {
+      "required": [
+        "numero_processo",
+        "cnpj",
+        "tipo",
+        "carteira_id"
+      ],
+      "type": "object",
+      "properties": {
+        "numero_processo": {
+          "title": "Numero processo",
+          "description": "Numero do Processo (formato CNJ)",
+          "type": "string",
+          "minLength": 1
+        },
+        "cnpj": {
+          "title": "Cnpj",
+          "description": "CNPJ",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo": {
+          "title": "Tipo",
+          "description": "Tipo (ativo, passivo, sales)",
+          "type": "string",
+          "minLength": 1
+        },
+        "metas": {
+          "title": "Metas",
+          "description": "Valores Meta (via formato String). Divididos por chave valor, exemplo: CHAVE_META=VALOR 1;OUTRA_CHAVE=OUTRO VALOR",
+          "type": "string"
+        },
+        "metas_json": {
+          "title": "Metas json",
+          "description": "Valores Meta (via formato JSON).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "carteira_id": {
+          "title": "Carteira id",
+          "description": "ID da Carteira",
+          "type": "integer"
+        }
+      }
+    },
+    "ApiBulkDelete": {
+      "required": [
+        "processos"
+      ],
+      "type": "object",
+      "properties": {
+        "processos": {
+          "type": "array",
+          "items": {
+            "description": "Numero do Processo (formato CNJ)",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "ApiBulkCreate": {
+      "required": [
+        "numero_processo",
+        "cnpj",
+        "tipo"
+      ],
+      "type": "object",
+      "properties": {
+        "numero_processo": {
+          "title": "Numero processo",
+          "description": "Numero do Processo (formato CNJ)",
+          "type": "string",
+          "minLength": 1
+        },
+        "cnpj": {
+          "title": "Cnpj",
+          "description": "CNPJ",
+          "type": "string",
+          "minLength": 1
+        },
+        "tipo": {
+          "title": "Tipo",
+          "description": "Tipo (ativo, passivo, sales)",
+          "type": "string",
+          "minLength": 1
+        },
+        "metas": {
+          "title": "Metas",
+          "description": "Valores Meta (via formato String). Divididos por chave valor, exemplo: CHAVE_META=VALOR 1;OUTRA_CHAVE=OUTRO VALOR",
+          "type": "string"
+        },
+        "metas_json": {
+          "title": "Metas json",
+          "description": "Valores Meta (via formato JSON).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "ProcessEvent": {
+      "required": [
+        "numero",
+        "tipo",
+        "texto",
+        "data"
+      ],
+      "type": "object",
+      "properties": {
+        "numero": {
+          "title": "Numero",
+          "description": "Número do evento",
+          "type": "integer"
+        },
+        "tipo": {
+          "title": "Tipo",
+          "description": "Tipo do evento",
+          "type": "string",
+          "minLength": 1
+        },
+        "texto": {
+          "title": "Texto",
+          "description": "Texto extraido de documentos do evento",
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "title": "Data",
+          "description": "Data do evento",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ApiUpdate": {
+      "required": [
+        "numero_processo"
+      ],
+      "type": "object",
+      "properties": {
+        "numero_processo": {
+          "title": "Numero processo",
+          "description": "Numero do Processo",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ApiWalletList": {
+      "required": [
+        "nome",
+        "produto_id",
+        "tipo_parte",
+        "estado_processual",
+        "id"
+      ],
+      "type": "object",
+      "properties": {
+        "nome": {
+          "title": "Nome",
+          "description": "Nome da carteira",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "produto_id": {
+          "title": "Produto id",
+          "description": "Identificador do Produto associado a essa carteira, caso ela tenha sido criada via api",
+          "type": "integer"
+        },
+        "tipo_parte": {
+          "title": "Tipo parte",
+          "description": "Se os processos nessa carteira são da parte ativa ou passiva",
+          "type": "string",
+          "enum": [
+            "ativo",
+            "passivo"
+          ]
+        },
+        "estado_processual": {
+          "title": "Estado processual",
+          "description": "Se a carteira representa processos ainda em curso ou encerrados",
+          "type": "string",
+          "enum": [
+            "em_curso",
+            "encerrado"
+          ]
+        },
+        "busca_automatica": {
+          "title": "Busca automatica",
+          "description": "Se 'true' indica que processos adicionados nesta carteira entrarão automaticamente nas buscas realizadas nos tribunais de justiça",
+          "type": "boolean",
+          "default": false
+        },
+        "id": {
+          "title": "Id",
+          "description": "Identificador da carteira",
+          "type": "integer"
+        },
+        "via_api": {
+          "title": "Via api",
+          "description": "Se a carteira foi criada via api",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "ApiCreateWallet": {
+      "required": [
+        "nome",
+        "produto_id",
+        "tipo_parte",
+        "estado_processual"
+      ],
+      "type": "object",
+      "properties": {
+        "nome": {
+          "title": "Nome",
+          "description": "Nome da carteira",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "produto_id": {
+          "title": "Produto id",
+          "description": "Identificador do Produto",
+          "type": "integer"
+        },
+        "tipo_parte": {
+          "title": "Tipo parte",
+          "description": "Se os processos nessa carteira são da parte ativa ou passiva",
+          "type": "string",
+          "enum": [
+            "ativo",
+            "passivo"
+          ]
+        },
+        "estado_processual": {
+          "title": "Estado processual",
+          "description": "Se a carteira representa processos ainda em curso ou encerrados",
+          "type": "string",
+          "enum": [
+            "em_curso",
+            "encerrado"
+          ]
+        },
+        "busca_automatica": {
+          "title": "Busca automatica",
+          "description": "Se 'true' indica que processos adicionados nesta carteira entrarão automaticamente nas buscas realizadas nos tribunais de justiça",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "Wallet": {
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "properties": {
+        "pk": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "name": {
+          "title": "Name",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "part": {
+          "title": "Part",
+          "description": "if you are the part 'Ativo' or 'Passivo' of process from this wallet",
+          "type": "string",
+          "enum": [
+            "ativo",
+            "passivo"
+          ]
+        },
+        "state": {
+          "title": "State",
+          "description": "if this wallet shold be considered active or not",
+          "type": "string",
+          "enum": [
+            "em_curso",
+            "encerrado"
+          ]
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "enum": [
+            "cnpj",
+            "numero_processo",
+            "do_not_push",
+            "execution",
+            "resource"
+          ]
+        },
+        "scrap_auto": {
+          "title": "Scrap auto",
+          "description": "Type of automatic scrap launch. <br />'Realtime' will launch in 30 minutes ONE time. <br />'Scheduled' will launch every friday at 18h. <br />'Realtime and Scheduled' combination of REALTIME and SCHEDULED, will launch in 30 minutes ONE time, then launch every friday at 18h. <br />'Every 2 days' will launch in 30 minutes ONE time and every 2 days. Monday, Wednesday and Friday at 20h. <br />'None' will not make any launch.",
+          "type": "string",
+          "enum": [
+            "scrap_auto_realtime",
+            "scrap_auto_scheduled",
+            "scrap_auto_both",
+            "scrap_auto_every2days",
+            "scrap_auto_none"
+          ]
+        },
+        "info_num_processos": {
+          "title": "Qtd. Processos",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "x-nullable": true
+        },
+        "info_missing": {
+          "title": "Missing",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "x-nullable": true
+        }
+      }
+    },
+    "Process": {
+      "required": [
+        "number"
+      ],
+      "type": "object",
+      "properties": {
+        "number": {
+          "title": "Number",
+          "type": "string",
+          "maxLength": 25,
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
